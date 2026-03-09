@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقعي الثاني</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="staly.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        #mainTitle {
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .animate-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .animate-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+
+</head>
+<body dir="rtl">
+    
+    <div id="loadingScreen" class="fixed inset-0 bg-indigo-700 z-[100] flex flex-col items-center justify-center cursor-pointer opacity-100 transition-opacity duration-700">
+        <canvas id="interactiveCanvas" class="absolute inset-0"></canvas>
+        
+        <div class="z-10 text-center text-white p-4 rounded-xl backdrop-blur-sm bg-black bg-opacity-30">
+            <h1 class="text-3xl md:text-6xl font-extrabold mb-4">مرحباً</h1>
+            <p class="text-lg md:text-xl opacity-80 mt-2">انقر مرتين (Double Click) للدخول.</p>
+        </div>
+    </div>
+
+    
+    <section class="min-h-screen flex items-center justify-center bg-gray-100 text-gray-900 relative overflow-hidden">
+        <canvas id="colorCanvas" class="absolute inset-0 z-0"></canvas>
+        
+        <div class="container mx-auto px-4 text-center z-10">
+            <h1 class="text-6xl md:text-8xl font-black text-white transition-opacity duration-1000 ease-in" id="mainTitle">
+                موقعي الثاني
+            </h1>
+            <p class="text-xl mt-4 text-white drop-shadow-md">
+                مرحباً بك في الموقعي الثاني
+            </p>
+        </div>
+    </section>
+
+    <script>
+        const bubbleCanvas = document.getElementById('interactiveCanvas');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const bubbleCtx = bubbleCanvas.getContext('2d');
+
+        let width;
+        let height;
+        let particlesArray = [];
+        const numberOfParticles = 70;
+        let animationId; 
+        let bubbleMouse = { x: null, y: null, radius: 150 }; 
+
+        function resizeBubbleCanvas() {
+            width = bubbleCanvas.width = window.innerWidth;
+            height = bubbleCanvas.height = window.innerHeight;
+            initBubbles(); 
+        }
+
+        window.addEventListener('resize', () => {
+            resizeBubbleCanvas();
+            if (loadingScreen.style.display === 'none') {
+                resizeColorCanvas();
+            }
+        });
+        
+        loadingScreen.addEventListener('mousemove', (event) => {
+            const rect = loadingScreen.getBoundingClientRect();
+            bubbleMouse.x = event.clientX - rect.left;
+            bubbleMouse.y = event.clientY - rect.top;
+        });
+
+        loadingScreen.addEventListener('mouseleave', () => {
+            bubbleMouse.x = null;
+            bubbleMouse.y = null;
+        });
+
+
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+            
+            draw() {
+                bubbleCtx.beginPath();
+                bubbleCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                bubbleCtx.fillStyle = this.color;
+                bubbleCtx.fill();
+            }
+            
+            update() {
+                if (this.x > width || this.x < 0) {
+                    this.directionX = -this.directionX;
+                }
+                if (this.y > height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
+                
+                if (bubbleMouse.x !== null && bubbleMouse.y !== null) {
+                    let dx = bubbleMouse.x - this.x;
+                    let dy = bubbleMouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < bubbleMouse.radius + this.size) {
+                        let forceDirectionX = dx / distance;
+                        let forceDirectionY = dy / distance;
+                        let maxForce = 20; 
+                        let strength = (bubbleMouse.radius - distance) / bubbleMouse.radius; 
+                        
+                        let pushX = forceDirectionX * strength * maxForce;
+                        let pushY = forceDirectionY * strength * maxForce;
+                        
+                        this.x -= pushX * 0.5; 
+                        this.y -= pushY * 0.5;
+                    }
+                }
+
+                this.x += this.directionX;
+                this.y += this.directionY;
+                
+                this.draw();
+            }
+        }
+
+        
+        function initBubbles() {
+            particlesArray = [];
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 5) + 1; 
+                let x = (Math.random() * ((width - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((height - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 0.4) - 0.2; 
+                let directionY = (Math.random() * 0.4) - 0.2; 
+                let color = `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.1})`; 
+                
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        }
+
+        function animateBubbles() {
+            bubbleCtx.clearRect(0, 0, width, height); 
+
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            
+            animationId = requestAnimationFrame(animateBubbles);
+        }
+
+        const colorCanvas = document.getElementById('colorCanvas');
+        const colorCtx = colorCanvas.getContext('2d');
+        let colorWidth;
+        let colorHeight;
+        let mainMouse = { x: 0, y: 0 }; 
+        let colorAnimationId; 
+
+        function resizeColorCanvas() {
+            colorWidth = colorCanvas.width = colorCanvas.parentElement.clientWidth;
+            colorHeight = colorCanvas.height = colorCanvas.parentElement.clientHeight;
+        }
+
+        function updateColor() {
+            colorAnimationId = requestAnimationFrame(updateColor);
+
+            
+            
+            const hue = Math.floor((mainMouse.x / colorWidth) * 360);
+            const lightness = 40 + Math.floor((mainMouse.y / colorHeight) * 40); 
+            
+            const gradient = colorCtx.createLinearGradient(0, 0, colorWidth, colorHeight);
+            
+            gradient.addColorStop(0, `hsl(${hue + 40}, 85%, ${lightness - 5}%)`); 
+            gradient.addColorStop(1, `hsl(${hue - 40}, 95%, ${lightness + 5}%)`); 
+
+            colorCtx.fillStyle = gradient;
+            colorCtx.fillRect(0, 0, colorWidth, colorHeight);
+        }
+
+        function setupColorCanvas() {
+            resizeColorCanvas();
+            
+            colorCanvas.addEventListener('mousemove', (event) => {
+                const rect = colorCanvas.getBoundingClientRect();
+                mainMouse.x = event.clientX - rect.left;
+                mainMouse.y = event.clientY - rect.top;
+            });
+
+            updateColor();
+        }
+
+        function hideLoadingScreen() {
+            cancelAnimationFrame(animationId); 
+
+            loadingScreen.style.opacity = 0; 
+            document.body.style.overflow = 'auto';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                setupColorCanvas(); 
+            }, 700); 
+        }
+
+
+        window.onload = () => {
+            resizeBubbleCanvas(); 
+            animateBubbles();
+            
+            loadingScreen.addEventListener('dblclick', hideLoadingScreen);
+        };
+    </script>
+</body>
+</html>
