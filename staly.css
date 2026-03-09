@@ -1,0 +1,182 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box; 
+}
+
+body {
+  width: 100%; 
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at center, #ff9900 0%, #FFA500 40%, #FF9933 80%, #FF8C00 100%);  
+  color: #333;
+}
+
+/* لضمان أن HTML يأخذ الارتفاع الكامل */
+html {
+  height: 100%;
+}
+
+.content-area {
+    padding-top: 60px; 
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#z {
+  position: absolute;
+  top: 10px; 
+  left: 10px;
+  width: 50px;
+  height: 50px;
+  background-color: #00D5FF; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 8px; 
+  z-index: 10; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+img {
+  width: 40px;
+  height: 40px;
+  position: absolute; 
+  top: 15px;
+  right: 15px; 
+  z-index: 10;
+  border-radius: 50%; /* لجعل الصورة دائرية */
+}
+
+h3 {
+  transition: 0.2s;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 48px;
+    font-weight: 900;
+    color: #8B0000;
+    margin-bottom: 15px;
+}
+
+p {
+  text-decoration: underline dotted #999;
+  line-height: 1.6; 
+  margin-top: 20px;
+}
+
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #FFDAB9 0%, #FFA500 100%); 
+    z-index: 9999; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s;
+    visibility: visible;
+    opacity: 1;
+    overflow: hidden;
+}
+
+/* عند إضافةالكلاس بالجافاسكريبت، تختفي الشاشة */
+#preloader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; 
+}
+
+/* حاوية النص المتطاير */
+#s {
+    position: relative;
+    height: 70px; /* لتحديد مساحة الحركة */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* تنسيق الحروف */
+.s{
+    font-size: 40px;
+    font-weight: 900;
+    color: #8B0000; 
+    position: absolute; /* لتكون قابلة للحركة الفردية */
+    transition: all 2s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* حركة نطاطة وجميلة */
+    opacity: 0; /* تبدأ الحروف مخفية */
+    transform: translate(0, 0) rotate(0deg);
+}
+
+/* حالة "التلخبط" - تبدأ الحروف في أماكن عشوائية */
+.s:nth-child(1) { /* Z */
+    transform: translate(-100px, -50px) rotate(-90deg);
+    opacity: 1;
+}
+
+.s:nth-child(2) { /* a */
+    transform: translate(50px, 100px) rotate(45deg);
+    opacity: 1;
+}
+
+.s:nth-child(3) { /* i */
+    transform: translate(-150px, 150px) rotate(180deg);
+    opacity: 1;
+}
+
+.s:nth-child(4) { /* d */
+    transform: translate(120px, -120px) rotate(-135deg);
+    opacity: 1;
+}
+
+/* الحركة النهائية: عندما يتم تطبيق كلاس .scrambled، تعود الحروف لموقعها الطبيعي */
+#preloader.scrambled .s {
+    position: relative; /* تعود إلى موضعها الطبيعي في الـ flex container */
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+    margin: 0 2px; /* تباعد خفيف بين الحروف بعد التجمع */
+}
+
+/* إخفاء دائرة التحميل (نستخدم حركة الحروف بدلاً منها) */
+.loader {
+    display: none; 
+}
+
+p.t {
+    color: #6a0000;
+    font-weight: 500;
+    transition: opacity 0.5s;
+    margin-top: 15px;
+}
+
+/* إخفاء نص التحميل بعد انتهاء الحركة */
+#preloader.scrambled p.t {
+    opacity: 0;
+}
+/* تنسيق الزر (الرابط) الجديد - تصميم التوهج */
+.button-link {
+    display: inline-block; /* لجعله يتصرف كزر ويقبل width/height/padding */
+    margin-top: 30px; /* تباعد عن الفقرة السابقة */
+    padding: 12px 25px;
+    background-color: linear-gradient(135deg, #FFDAB9 0%, #FFA500 100%); /* لون برتقالي ذهبي فاتح */
+    color: #8B0000; /* نص أحمر غامق */
+    text-decoration: none; /* إزالة الخط السفلي للرابط */
+    border-radius: 10px; /* حواف دائرية أكثر */
+    font-weight: 900; /* خط سميك جداً */
+    font-size: 18px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    /* ظل خفيف وواضح */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); 
+    transition: all 0.4s ease; /* حركة ناعمة عند التفاعل */
+}

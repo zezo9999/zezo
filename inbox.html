@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ziad ahmed</title>
+    <link rel="stylesheet" href="staly.css">
+</head>
+<body> 
+ 
+    <div id="preloader">
+        <div id="s">
+            
+            <span class="s">Z</span>
+            <span class="s">e</span>
+            <span class="s">z</span>
+            <span class="s">o</span>
+        </div>
+        <p class="t">Loading...</p>
+    </div>
+    <div class="content-area">
+        <h1 id="z">Z</h1>
+        <div id="app">
+            <div class="codebtn11">
+                
+            </div>
+        </div>
+
+        <img src="img.png" alt="your image" title="Your Profile Image">
+
+        <h3>hi my names</h3>
+        <h1>ziad ahmed</h1>
+        <div>
+            <p>I am a beginner in programming and this is also my first website
+            , dated 18/9/2025, and I hope everyone's dreams come true</p>
+        </div>
+        <h3>My interest</h3> 
+        <p>I love working in programming and I also like video games a little</p>
+
+    </div>
+       <div class="button-container">
+            <a href="inbox2.html" target="_blank" class="button-link">
+                زيارة الموقع الثاني
+            </a>
+            </div>
+    
+    <!-- كود JavaScript لتشغيل حركة التحميل وإخفائها -->
+    <script>
+        // دالة تشغل الحركة ثم تخفي شاشة التحميل بالكامل
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            
+            // المرحلة 1: تشغيل حركة التجميع (بعد 50ms)
+            // تستمر حركة التجميع لمدة ثانيتين (2000ms)
+            setTimeout(() => {
+                preloader.classList.add('scrambled');
+            }, 50);
+
+            // المرحلة 2: تشغيل حركة التفرق (بعد 2 ثانية تجميع + 1 ثانية انتظار = 3050ms)
+            // نستخدم 3050 ميلي ثانية لبدء التفكك، مما يمنح ثانية كاملة لقراءة الاسم.
+            setTimeout(() => {
+                preloader.classList.remove('scrambled'); // إزالة كلاس التجميع
+                preloader.classList.add('disperse'); // إضافة كلاس التفكك السريع (0.5 ثانية)
+            }, 3050); // 3.05 ثانية
+
+            // المرحلة 3: إخفاء شاشة التحميل بالكامل (3050ms + 500ms تفكك + 50ms إضافية)
+            // نستخدم 3600 ميلي ثانية لإخفاء الشاشة نهائيًا.
+            setTimeout(() => {
+                preloader.classList.add('hidden');
+            }, 3600); // 3.6 ثانية هو إجمالي وقت الحركة
+        });
+    </script>
+</body>
+</html>
